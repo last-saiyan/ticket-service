@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package ticket.v1;
+
+option go_package = "ticket.v1";
+
+// User information
+message User {
+    string first_name = 1;
+    string last_name = 2;
+    string email = 3;
+}
+
+// Ticket purchase request
+message TicketPurchaseRequest {
+    string from = 1;
+    string to = 2;
+    User user = 3;
+    double price_paid = 4;
+}
+
+// Ticket purchase response
+message ReceiptResponse {
+    User user = 1;
+    string from = 2;
+    string to = 3;
+    int64 section = 4;
+    int64 seat_number = 5;
+    double price_paid = 6;
+}
+
+// Basic payment response
+message PaymentResponse {
+    string message = 1;
+}
+
+// Receipt request by user email
+message ReceiptRequest {
+    string email = 1;
+}
+
+
+// Seat allocation request
+message SectionRequest {
+    int64 section = 1;
+}
+
+// Seat allocation response
+message SectionResponse {
+    repeated UserSeat users = 1;
+}
+
+message UserSeat {
+    string user = 1;
+    int64 section = 2;
+    int64 seat_Number = 3;
+}
+
+
+
+
+// User modification request
+message ModifySeatRequest {
+    string email = 1;
+    int32 new_section = 2;
+    int32 new_seat_number = 3;
+}
+
+
+// User removal request
+message RemoveUserRequest {
+    string email = 1;
+}
+
+// Basic acknowledgment response
+message SeatUpdateResponse {
+    string message = 1;
+}
+
+// Basic acknowledgment response
+message UserDeleteResponse {
+    string message = 1;
+}
+
+// gRPC service definition
+service TicketService {
+    rpc PurchaseTicket(TicketPurchaseRequest) returns (PaymentResponse);
+    rpc GetReceipt(ReceiptRequest) returns (ReceiptResponse);
+
+// https://stackoverflow.com/a/78665460 
+// depending on what is required we can use stream or unary
+    rpc ViewUsersBySection(SectionRequest) returns (SectionResponse);
+    rpc ViewUsersBySectionStream(SectionRequest) returns (stream UserSeat);
+
+    rpc RemoveUser(RemoveUserRequest) returns (UserDeleteResponse);
+    rpc ModifyUserSeat(ModifySeatRequest) returns (SeatUpdateResponse);
+}
