@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	int port = 8080
+	port := 8080
 	// todo use proper loggers
 	fmt.Printf("starting the grpc server %d", port )
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
